@@ -7,7 +7,7 @@ use PhpParser\Node\Expr;
 
 class Bstk extends BaseController
 {
-    public function detail($noRegistrasi)
+    public function edit($noRegistrasi)
     {
         $getData = $this->RegistrationBSTK->where('no_registration',$noRegistrasi)
                                             ->join('detail_registration_user','detail_registration_user.owner_no_registration = registration_bstk.no_registration','right')
