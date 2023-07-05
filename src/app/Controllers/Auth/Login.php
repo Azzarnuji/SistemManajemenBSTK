@@ -12,7 +12,7 @@ class Login extends BaseController
     {
         return view('Login/index');
     }
-    public function edit()
+    public function auth()
     {
         # code...
         $email = $this->request->getVar('email');
