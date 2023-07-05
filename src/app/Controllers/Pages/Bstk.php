@@ -7,7 +7,26 @@ use PhpParser\Node\Expr;
 
 class Bstk extends BaseController
 {
-    
+    public function detail($noRegistrasi)
+    {
+        $getData = $this->RegistrationBSTK->where('no_registration',$noRegistrasi)
+                                            ->join('detail_registration_user','detail_registration_user.owner_no_registration = registration_bstk.no_registration','right')
+                                            ->join('detail_registration_image_car','detail_registration_image_car.owner_no_registration = registration_bstk.no_registration','right')
+                                            ->join('detail_registration_date','detail_registration_date.owner_no_registration = registration_bstk.no_registration','right')
+                                            ->join('detail_registration_car','detail_registration_car.owner_no_registration = registration_bstk.no_registration','right')
+                                            ->get()->getResult();
+        # code...
+        if($this->request->isAJAX()){
+            $data = [
+                'judul'=>'List BSTK',
+                'data'=>$getData,
+                'user'=>$this->JWTHelper->decodeToken(get_cookie('Token'))->full_name
+            ];
+            return view('Pages/BSTK/detail_bstk',$data);
+        }
+        return redirect()->to('/dashboard');
+        
+    }
     public function list()
     {
         $getAllData = $this->RegistrationBSTK->join('detail_registration_user','detail_registration_user.owner_no_registration = registration_bstk.no_registration','right')
