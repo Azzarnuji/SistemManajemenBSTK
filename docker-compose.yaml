@@ -1,0 +1,56 @@
+version: '3'
+networks:
+  codeigniter:
+
+services:
+  php:
+    image: php:8.1-fpm-alpine
+    build: 
+      context: .
+      dockerfile: DockerFile
+    ports:
+      - "9000:9000"
+    volumes:
+      - ./src:/code
+    networks:
+      - codeigniter
+  mysql:
+    image: mysql:5.7.22
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./docker/mysql:/var/lib/mysql
+    networks:
+      - codeigniter
+    environment:
+      MYSQL_DATABASE : tutorial_docker
+      MYSQL_USER : azzarnuji
+      MYSQL_PASSWORD: azzar
+      MYSQL_ROOT_PASSWORD : azzar
+      SERVICE_TAGS : dev
+      SERVICE_NAME : mysql
+  nginx:
+    image: nginx:1.19.0-alpine
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./src:/code
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - ./docker/nginx/log:/var/log/nginx
+    networks:
+      - codeigniter
+    depends_on:
+      - mysql
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    restart: always
+    environment:
+      PMA_HOST : mysql
+      PMA_USER : root
+      PMA_PASSWORD : azzar
+    networks:
+      - codeigniter
+    ports:
+      - "8001:80"
+    depends_on:
+      - mysql
