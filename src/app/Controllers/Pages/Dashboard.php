@@ -15,7 +15,16 @@ class Dashboard extends BaseController
                                             ->whereIn('status',['Disewa','Pending'])
                                             ->limit(4)
                                             ->get()->getResultArray();
-        
+        $data = [
+            'judul'=>"Dashboard",
+            'allData'=>$getAllData,
+            'user'=>$this->JWTHelper->decodeToken(get_cookie('Token'))->full_name,
+            'role'=>$this->JWTHelper->decodeToken(get_cookie('Token'))->role,
+            'amountData'=>$this->RegistrationBSTK->countAll(),
+            'amountDataDisewa'=>$this->RegistrationBSTK->where('status','Disewa')->countAllResults(),
+            'amountDataSelesaiSewa'=>$this->RegistrationBSTK->where('status','Selesai')->countAllResults(),
+            'amountDrivers'=>$this->UserAuthModel->where('role','driver')->countAllResults()
+        ];
         // var_dump($this->session->getFlashdata('dataSuccess')); 
         // dd($this->RegistrationBSTK->getLastQuery());
         return view('Pages/Dashboard/index',$data);
